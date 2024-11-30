@@ -13,6 +13,9 @@ if 'previous_questions' not in st.session_state:
 if 'previous_answers' not in st.session_state:
     st.session_state.previous_answers = []
 
+st.title("Code Helper")
+
+
 if st.session_state.previous_questions:
     with st.expander("Previous Questions and Answers"):
         for i in range(len(st.session_state.previous_questions)):
@@ -31,8 +34,13 @@ clear_button = st.checkbox("Clear Previous Questions and Answers")
 #question = st.text_input("How can I help you?")
 #submit_button = st.button(key="Submit")
 
-if submit_button:  
-  result = llm.invoke(question)
+if submit_button: 
+  context = ""
+  for i in range(len(st.session_state.previous_questions)):
+      context += f"**Question {i+1}**: {st.session_state.previous_questions[i]}\n"
+      context += f"**Answer {i+1}**: {st.session_state.previous_answers[i]}\n\n"
+  full_question = f"{context}\n**New Question**: {question}" 
+  result = llm.invoke(full_question)
   answer = result.content  
   st.session_state.previous_questions.append(question)
   st.session_state.previous_answers.append(answer)   
